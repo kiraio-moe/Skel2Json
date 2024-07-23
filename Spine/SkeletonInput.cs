@@ -1,4 +1,4 @@
-namespace Skel2Json.Core
+namespace Skel2Json.Spine
 {
     // Obtained from https://github.com/EsotericSoftware/spine-runtimes/blob/1aa50ca9684d42c24ccdf1c0d76d7cfdfaa45325/spine-csharp/src/SkeletonBinary.cs#L1213
     public class SkeletonInput(Stream input)
