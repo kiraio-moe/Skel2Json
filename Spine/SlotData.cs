@@ -7,10 +7,10 @@ namespace Skel2Json.Spine
     public class SlotData
     {
         [JsonProperty("name")]
-        public required string? Name;
+        public string Name = "";
 
         [JsonProperty("bone")]
-        public required string? Bone;
+        public string Bone = "";
 
         [JsonProperty("color")]
         public string? Color;
@@ -22,7 +22,7 @@ namespace Skel2Json.Spine
         public string? Attachment;
 
         [JsonProperty("blend")]
-        public string? Blend;
+        public string Blend = "normal";
 
         public bool NonEssential;
 

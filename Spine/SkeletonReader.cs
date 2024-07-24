@@ -7,7 +7,7 @@ namespace Skel2Json.Spine
         public static SkeletonData? ReadSkeletonBinary(Stream stream)
         {
             SkeletonData skeletonData = new();
-            SkeletonInput input = new(stream);
+            SkeletonInput? input = new(stream);
             float scale = 1f;
 
             //!----- READ SKELETON
@@ -25,7 +25,7 @@ namespace Skel2Json.Spine
             skeletonData.Skeleton.Y = (float)Math.Round(input.ReadFloat(), 2);
             skeletonData.Skeleton.Width = (float)Math.Round(input.ReadFloat(), 2);
             skeletonData.Skeleton.Height = (float)Math.Round(input.ReadFloat(), 2);
-            skeletonData.Skeleton.ReferenceScale = (float)Math.Round(input.ReadFloat() * scale, 2); // timed by 1, reference from SkeletonLoader
+            skeletonData.Skeleton.ReferenceScale = (float)Math.Round(input.ReadFloat() * scale, 2);
 
             bool nonEssential;
             skeletonData.Skeleton.NonEssential = nonEssential = input.ReadBoolean();
@@ -39,12 +39,12 @@ namespace Skel2Json.Spine
 
             //! WTF IS THIS?
             int n;
-            string[] o;
+            object[]? o;
 
             // Strings.
             o = input.strings = new string[n = input.ReadInt(true)];
             for (int i = 0; i < n; i++)
-                o[i] = input.ReadString();
+                o[i] = input.ReadString() ?? null;
 
             //!----- READ BONES
             BoneData[] bones = skeletonData.Bones.Resize(n = input.ReadInt(true)).Items;
@@ -53,8 +53,8 @@ namespace Skel2Json.Spine
                 BoneData bone =
                     new()
                     {
-                        Name = input.ReadString(),
-                        Parent = i == 0 ? null : bones[input.ReadInt(true)].ToString(), // Skip root (zero) parent
+                        Name = input.ReadString() ?? "",
+                        Parent = i == 0 ? "" : bones[input.ReadInt(true)].ToString(), // Skip root (zero) parent
                         Rotation = (float)Math.Round(input.ReadFloat(), 2),
                         X = (float)Math.Round(input.ReadFloat(), 2) * scale,
                         Y = (float)Math.Round(input.ReadFloat(), 2) * scale,
@@ -81,23 +81,53 @@ namespace Skel2Json.Spine
             SlotData[] slots = skeletonData.Slots.Resize(n = input.ReadInt(true)).Items;
             for (int i = 0; i < n; i++)
             {
-                SlotData slot = new()
-                {
-                    Name = input.ReadString(),
-                    Bone = bones[input.ReadInt(true)].ToString(),
-                    Color = ColorHelper.ToRGBA(input.ReadInt()),
-                    DarkColor = ColorHelper.ToRGB(input.ReadInt()),
-                    Attachment = input.ReadStringRef(),
-                    Blend = StringHelper.ToLowerCase(
-                    BlendModeEnum.Values[input.ReadInt(true)].ToString()
-                ),
-                    NonEssential = nonEssential,
-                    Visible = input.ReadBoolean()
-                };
+                SlotData slot =
+                    new()
+                    {
+                        Name = input.ReadString(),
+                        Bone = bones[input.ReadInt(true)].ToString(),
+                        Color = ColorHelper.ToRGBA(input.ReadInt()),
+                        DarkColor = ColorHelper.ToRGB(input.ReadInt()),
+                        Attachment = input.ReadStringRef(),
+                        Blend = StringHelper.ToLowerCase(
+                            BlendModeEnum.Values[input.ReadInt(true)].ToString()
+                        ),
+                        NonEssential = nonEssential,
+                        Visible = input.ReadBoolean()
+                    };
                 slots[i] = slot;
             }
             skeletonData.Slots.Items = slots;
             //!----- END OF READ SLOTS
+
+            //!----- READ IK CONSTRAINTS
+            IKConstraintData[] iKConstraints = skeletonData
+                .IKConstraints.Resize(n = input.ReadInt(true))
+                .Items;
+            for (int i = 0; i < n; i++)
+            {
+                IKConstraintData ik = new()
+                {
+                    Name = input.ReadString(),
+                    Order = input.ReadInt(true),
+                    Bones = Enumerable
+                    .Range(0, input.ReadInt(true))
+                    .Select(_ => bones[input.ReadInt(true)].ToString())
+                    .ToList(),
+                    Target = bones[input.ReadInt(true)].ToString()
+                };
+                int flags = input.Read();
+                ik.SkinRequired = (flags & 1) != 0;
+                ik.BendDirection = (flags & 2) != 0;
+                ik.Compress = (flags & 4) != 0;
+                ik.Stretch = (flags & 8) != 0;
+                ik.Uniform = (flags & 16) != 0;
+                ik.Mix = (flags & 32) != 0 ? ((flags & 64) != 0 ? input.ReadFloat() : 1) : ik.Mix;
+                ik.Softness = (flags & 128) != 0 ? input.ReadFloat() * scale : ik.Softness;
+                iKConstraints[i] = ik;
+            }
+            skeletonData.IKConstraints.Items = iKConstraints;
+            //!----- END OF READ IK CONSTRAINTS
 
             return skeletonData;
         }

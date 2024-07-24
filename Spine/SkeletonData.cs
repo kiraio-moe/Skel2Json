@@ -13,5 +13,8 @@ namespace Skel2Json.Spine
 
         [JsonProperty("slots")]
         public ExposedList<SlotData> Slots = [];
+
+        [JsonProperty("ik")]
+        public ExposedList<IKConstraintData> IKConstraints = [];
     }
 }

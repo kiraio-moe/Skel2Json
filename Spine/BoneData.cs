@@ -8,40 +8,40 @@ namespace Skel2Json.Spine
     public class BoneData
     {
         [JsonProperty("name")]
-        public required string Name;
+        public string Name = "";
 
         [JsonProperty("parent")]
-        public string? Parent;
+        public string Parent = "";
 
         [JsonProperty("length")]
-        public float? Length;
+        public float Length;
 
         [JsonProperty("rotation")]
-        public float? Rotation;
+        public float Rotation;
 
         [JsonProperty("x")]
-        public float? X;
+        public float X;
 
         [JsonProperty("y")]
-        public float? Y;
+        public float Y;
 
         [JsonProperty("scaleX")]
-        public float? ScaleX;
+        public float ScaleX = 1f;
 
         [JsonProperty("scaleY")]
-        public float? ScaleY;
+        public float ScaleY = 1f;
 
         [JsonProperty("shearX")]
-        public float? ShearX;
+        public float ShearX;
 
         [JsonProperty("shearY")]
-        public float? ShearY;
+        public float ShearY;
 
         [JsonProperty("inherit")]
-        public string? Inherit;
+        public string Inherit = "normal";
 
         [JsonProperty("skin")]
-        public bool? SkinRequired;
+        public bool SkinRequired;
 
         //!----- NON ESSENTIALS
         public bool NonEssential;
@@ -80,24 +80,24 @@ namespace Skel2Json.Spine
             return Y != 0;
         }
 
-        public static bool ShouldSerializeScaleX()
+        public bool ShouldSerializeScaleX()
         {
-            return false;
+            return ScaleX != 1f;
         }
 
-        public static bool ShouldSerializeScaleY()
+        public bool ShouldSerializeScaleY()
         {
-            return false;
+            return ScaleY != 1f;
         }
 
-        public static bool ShouldSerializeShearX()
+        public bool ShouldSerializeShearX()
         {
-            return false;
+            return ShearX != 0;
         }
 
-        public static bool ShouldSerializeShearY()
+        public bool ShouldSerializeShearY()
         {
-            return false;
+            return ShearY != 0;
         }
 
         public bool ShouldSerializeInherit()
@@ -106,9 +106,9 @@ namespace Skel2Json.Spine
                 && Inherit != StringHelper.ToCamelCase(InheritEnum.Values[0].ToString());
         }
 
-        public static bool ShouldSerializeSkinRequired()
+        public bool ShouldSerializeSkinRequired()
         {
-            return false;
+            return SkinRequired;
         }
 
         public static bool ShouldSerializeNonEssential()
@@ -130,6 +130,7 @@ namespace Skel2Json.Spine
         {
             return false;
         }
+
         //!----- END OF NON ESSENTIALS
 
         public override string ToString()

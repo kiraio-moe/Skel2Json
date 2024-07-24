@@ -12,37 +12,37 @@ namespace Skel2Json.Spine
         public string? Spine;
 
         [JsonProperty("x")]
-        public float? X;
+        public float X;
 
         [JsonProperty("y")]
-        public float? Y;
+        public float Y;
 
         [JsonProperty("width")]
-        public float? Width;
+        public float Width;
 
         [JsonProperty("height")]
-        public float? Height;
+        public float Height;
 
         [JsonProperty("referenceScale")]
-        public float? ReferenceScale;
+        public float? ReferenceScale = 100f;
 
         //!----- NON ESSENTIALS
         public bool NonEssential;
 
         [JsonProperty("fps")]
-        public float? Fps;
+        public float? Fps = 30f;
 
         [JsonProperty("images")]
-        public string? Images;
+        public string Images = "";
 
         [JsonProperty("audio")]
-        public string? Audio;
+        public string Audio = "";
 
         //!----- END OF NON ESSENTIALS
 
-        public static bool ShouldSerializeReferenceScale()
+        public bool ShouldSerializeReferenceScale()
         {
-            return false;
+            return ReferenceScale != 100f;
         }
 
         public static bool ShouldSerializeNonEssential()
@@ -50,9 +50,9 @@ namespace Skel2Json.Spine
             return false;
         }
 
-        public static bool ShouldSerializeFps()
+        public bool ShouldSerializeFps()
         {
-            return false;
+            return Fps != 30f;
         }
 
         public bool ShouldSerializeImages()
