@@ -1,4 +1,6 @@
 using Newtonsoft.Json;
+using Skel2Json.Spine.Enums;
+using Skel2Json.Spine.Helpers;
 
 namespace Skel2Json.Spine
 {
@@ -10,8 +12,6 @@ namespace Skel2Json.Spine
 
         [JsonProperty("parent")]
         public string? Parent;
-
-        // public BoneData? Parent;
 
         [JsonProperty("length")]
         public float? Length;
@@ -37,11 +37,7 @@ namespace Skel2Json.Spine
         [JsonProperty("shearY")]
         public float? ShearY;
 
-        // [JsonProperty("length")]
-        // public float? Length;
-
         [JsonProperty("inherit")]
-        // public string? Inherit;
         public string? Inherit;
 
         [JsonProperty("skin")]
@@ -84,22 +80,22 @@ namespace Skel2Json.Spine
             return Y != 0;
         }
 
-        public bool ShouldSerializeScaleX()
+        public static bool ShouldSerializeScaleX()
         {
             return false;
         }
 
-        public bool ShouldSerializeScaleY()
+        public static bool ShouldSerializeScaleY()
         {
             return false;
         }
 
-        public bool ShouldSerializeShearX()
+        public static bool ShouldSerializeShearX()
         {
             return false;
         }
 
-        public bool ShouldSerializeShearY()
+        public static bool ShouldSerializeShearY()
         {
             return false;
         }
@@ -110,7 +106,7 @@ namespace Skel2Json.Spine
                 && Inherit != StringHelper.ToCamelCase(InheritEnum.Values[0].ToString());
         }
 
-        public bool ShouldSerializeSkinRequired()
+        public static bool ShouldSerializeSkinRequired()
         {
             return false;
         }
@@ -130,32 +126,16 @@ namespace Skel2Json.Spine
             return NonEssential && Icon != null;
         }
 
-        public bool ShouldSerializeVisible()
+        public static bool ShouldSerializeVisible()
         {
             return false;
         }
-
         //!----- END OF NON ESSENTIALS
-
-        // public BoneData(string name, BoneData parent)
-        // {
-        //     Name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null.");
-        //     Parent = parent;
-        // }
 
         public override string ToString()
         {
             return Name;
         }
-    }
-
-    public enum Inherit
-    {
-        Normal,
-        OnlyTranslation,
-        NoRotationOrReflection,
-        NoScale,
-        NoScaleOrReflection
     }
 
     public class InheritEnum

@@ -1,3 +1,5 @@
+using Skel2Json.Spine.Helpers;
+
 namespace Skel2Json.Spine
 {
     public class SkeletonReader
@@ -7,7 +9,6 @@ namespace Skel2Json.Spine
             SkeletonData skeletonData = new();
             SkeletonInput input = new(stream);
             float scale = 1f;
-            bool nonEssential = false;
 
             //!----- READ SKELETON
             byte[]? skeletonHashBytes = BitConverter.GetBytes(input.ReadLong());
@@ -26,6 +27,7 @@ namespace Skel2Json.Spine
             skeletonData.Skeleton.Height = (float)Math.Round(input.ReadFloat(), 2);
             skeletonData.Skeleton.ReferenceScale = (float)Math.Round(input.ReadFloat() * scale, 2); // timed by 1, reference from SkeletonLoader
 
+            bool nonEssential;
             skeletonData.Skeleton.NonEssential = nonEssential = input.ReadBoolean();
             if (nonEssential)
             {
@@ -33,7 +35,7 @@ namespace Skel2Json.Spine
                 skeletonData.Skeleton.Images = input.ReadString() ?? "";
                 skeletonData.Skeleton.Audio = input.ReadString() ?? "";
             }
-            //!----- END READ SKELETON
+            //!----- END OF READ SKELETON
 
             //! WTF IS THIS?
             int n;
@@ -66,13 +68,36 @@ namespace Skel2Json.Spine
                         ),
                         SkinRequired = input.ReadBoolean(),
                         NonEssential = nonEssential,
-                        Color = ColorHelper.ToHex(input.ReadInt()),
+                        Color = ColorHelper.ToRGBA(input.ReadInt()),
                         Icon = input.ReadString(),
                         Visible = input.ReadBoolean()
                     };
                 bones[i] = bone;
             }
-            //!----- END READ BONES
+            skeletonData.Bones.Items = bones;
+            //!----- END OF READ BONES
+
+            //!----- READ SLOTS
+            SlotData[] slots = skeletonData.Slots.Resize(n = input.ReadInt(true)).Items;
+            for (int i = 0; i < n; i++)
+            {
+                SlotData slot = new()
+                {
+                    Name = input.ReadString(),
+                    Bone = bones[input.ReadInt(true)].ToString(),
+                    Color = ColorHelper.ToRGBA(input.ReadInt()),
+                    DarkColor = ColorHelper.ToRGB(input.ReadInt()),
+                    Attachment = input.ReadStringRef(),
+                    Blend = StringHelper.ToLowerCase(
+                    BlendModeEnum.Values[input.ReadInt(true)].ToString()
+                ),
+                    NonEssential = nonEssential,
+                    Visible = input.ReadBoolean()
+                };
+                slots[i] = slot;
+            }
+            skeletonData.Slots.Items = slots;
+            //!----- END OF READ SLOTS
 
             return skeletonData;
         }

@@ -10,5 +10,8 @@ namespace Skel2Json.Spine
 
         [JsonProperty("bones")]
         public ExposedList<BoneData> Bones = [];
+
+        [JsonProperty("slots")]
+        public ExposedList<SlotData> Slots = [];
     }
 }
