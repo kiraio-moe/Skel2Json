@@ -19,5 +19,13 @@ namespace Skel2Json.Spine
 
         [JsonProperty("transform")]
         public ExposedList<TransformConstraintData> TransformConstraints = [];
+
+        [JsonProperty("path")]
+        public ExposedList<PathConstraintData> PathConstraints = [];
+
+        public bool ShouldSerializePathConstraints()
+        {
+            return PathConstraints.Count > 0;
+        }
     }
 }

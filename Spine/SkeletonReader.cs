@@ -187,6 +187,52 @@ namespace Skel2Json.Spine
             skeletonData.TransformConstraints.Items = transformConstraints;
             //!----- END OF READ TRANSFORM CONSTRAINTS
 
+            //!----- READ PATH CONSTRAINTS
+            PathConstraintData[] pathConstraints = skeletonData
+                .PathConstraints.Resize(n = input.ReadInt(true))
+                .Items;
+            for (int i = 0; i < n; i++)
+            {
+                PathConstraintData path =
+                    new()
+                    {
+                        Name = input.ReadString() ?? "",
+                        Order = input.ReadInt(true),
+                        SkinRequired = input.ReadBoolean(),
+                        Bones = Enumerable
+                            .Range(0, input.ReadInt(true))
+                            .Select(_ => bones[input.ReadInt(true)].ToString())
+                            .ToList(),
+                        Target = slots[input.ReadInt(true)].ToString()
+                    };
+                int flags = input.Read();
+                path.PositionMode = PositionModeEnum.Values[flags & 1].ToString().ToLower();
+                path.SpacingMode = SpacingModeEnum.Values[(flags >> 1) & 3].ToString().ToLower();
+                path.RotateMode = RotateModeEnum.Values[(flags >> 3) & 3].ToString().ToLower();
+                path.OffsetRotation = (float)
+                    Math.Round((flags & 128) != 0 ? input.ReadFloat() : path.OffsetRotation, 2);
+                path.Position = (float)
+                    Math.Round(
+                        path.PositionMode == "fixed"
+                            ? input.ReadFloat() * scale
+                            : input.ReadFloat(),
+                        2
+                    );
+                path.Spacing = (float)
+                    Math.Round(
+                        (path.SpacingMode == "length" || path.SpacingMode == "fixed")
+                            ? input.ReadFloat() * scale
+                            : input.ReadFloat(),
+                        2
+                    );
+                path.MixRotate = (float)Math.Round(input.ReadFloat(), 2);
+                path.MixX = (float)Math.Round(input.ReadFloat(), 2);
+                path.MixY = (float)Math.Round(input.ReadFloat(), 2);
+                pathConstraints[i] = path;
+            }
+            skeletonData.PathConstraints.Items = pathConstraints;
+            //!----- END OF PATH CONSTRAINTS
+
             return skeletonData;
         }
     }

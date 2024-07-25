@@ -53,6 +53,11 @@ namespace Skel2Json.Spine
         {
             return false;
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public class BlendModeEnum
