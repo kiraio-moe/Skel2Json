@@ -47,6 +47,51 @@ namespace Skel2Json.Spine
 
         [JsonProperty("mixY")]
         public float MixY = 1;
+
+        public bool ShouldSerializePositionMode()
+        {
+            return PositionMode != "percent";
+        }
+
+        public bool ShouldSerializeSpacingMode()
+        {
+            return SpacingMode != "length";
+        }
+
+        public bool ShouldSerializeRotateMode()
+        {
+            return RotateMode != "tangent";
+        }
+
+        public bool ShouldSerializeOffsetRotation()
+        {
+            return OffsetRotation != 0;
+        }
+
+        public bool ShouldSerializePosition()
+        {
+            return Position != 0;
+        }
+
+        public bool ShouldSerializeSpacing()
+        {
+            return Spacing != 0;
+        }
+
+        public bool ShouldSerializeMixRotate()
+        {
+            return MixRotate != 1;
+        }
+
+        public bool ShouldSerializeMixX()
+        {
+            return MixX != 1;
+        }
+
+        public bool ShouldSerializeMixY()
+        {
+            return MixY != 1;
+        }
     }
 
     public class PositionModeEnum
