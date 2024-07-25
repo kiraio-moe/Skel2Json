@@ -233,6 +233,48 @@ namespace Skel2Json.Spine
             skeletonData.PathConstraints.Items = pathConstraints;
             //!----- END OF PATH CONSTRAINTS
 
+            //!----- READ PHYSICS CONSTRAINTS
+            PhysicsConstraintData[] physicsConstraints = skeletonData
+                .PhysicsConstraints.Resize(n = input.ReadInt(true))
+                .Items;
+            for (int i = 0; i < n; i++)
+            {
+                PhysicsConstraintData physic =
+                    new()
+                    {
+                        Name = input.ReadString() ?? "",
+                        Order = input.ReadInt(true),
+                        Bone = bones[input.ReadInt(true)].ToString()
+                    };
+                int flags = input.Read();
+                physic.SkinRequired = (flags & 1) != 0;
+                physic.X = (flags & 2) != 0 ? input.ReadFloat() : physic.X;
+                physic.Y = (flags & 4) != 0 ? input.ReadFloat() : physic.Y;
+                physic.Rotate = (flags & 8) != 0 ? input.ReadFloat() : physic.Rotate;
+                physic.ScaleX = (flags & 16) != 0 ? input.ReadFloat() : physic.ScaleX;
+                physic.ShearX = (flags & 32) != 0 ? input.ReadFloat() : physic.ShearX;
+                physic.Limit = ((flags & 64) != 0 ? input.ReadFloat() : physic.Limit) * scale;
+                physic.Step = (int)(1f / input.ReadUByte());
+                physic.Inertia = input.ReadFloat();
+                physic.Strength = input.ReadFloat();
+                physic.Damping = input.ReadFloat();
+                physic.MassInverse = (flags & 128) != 0 ? input.ReadFloat() : physic.MassInverse;
+                physic.Wind = input.ReadFloat();
+                physic.Gravity = input.ReadFloat();
+                flags = input.Read();
+                physic.InertiaGlobal = (flags & 1) != 0;
+                physic.StrengthGlobal = (flags & 2) != 0;
+                physic.DampingGlobal = (flags & 4) != 0;
+                physic.MassGlobal = (flags & 8) != 0;
+                physic.WindGlobal = (flags & 16) != 0;
+                physic.GravityGlobal = (flags & 32) != 0;
+                physic.MixGlobal = (flags & 64) != 0;
+                physic.Mix = (flags & 128) != 0 ? input.ReadFloat() : physic.Mix;
+                physicsConstraints[i] = physic;
+            }
+            skeletonData.PhysicsConstraints.Items = physicsConstraints;
+            //!----- END OF READ PHYSICS CONSTRAINTS
+
             return skeletonData;
         }
     }

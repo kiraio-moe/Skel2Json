@@ -23,9 +23,17 @@ namespace Skel2Json.Spine
         [JsonProperty("path")]
         public ExposedList<PathConstraintData> PathConstraints = [];
 
+        [JsonProperty("physics")]
+        public ExposedList<PhysicsConstraintData> PhysicsConstraints = [];
+
         public bool ShouldSerializePathConstraints()
         {
             return PathConstraints.Count > 0;
+        }
+
+        public bool ShouldSerializePhysicsConstraints()
+        {
+            return PhysicsConstraints.Count > 0;
         }
     }
 }
