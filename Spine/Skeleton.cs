@@ -30,7 +30,7 @@ namespace Skel2Json.Spine
         public bool NonEssential;
 
         [JsonProperty("fps")]
-        public float? Fps = 30f;
+        public float? Fps = 30;
 
         [JsonProperty("images")]
         public string Images = "";
@@ -42,7 +42,7 @@ namespace Skel2Json.Spine
 
         public bool ShouldSerializeReferenceScale()
         {
-            return ReferenceScale != 100f;
+            return ReferenceScale != 100;
         }
 
         public static bool ShouldSerializeNonEssential()
@@ -52,7 +52,7 @@ namespace Skel2Json.Spine
 
         public bool ShouldSerializeFps()
         {
-            return Fps != 30f;
+            return Fps != 30;
         }
 
         public bool ShouldSerializeImages()

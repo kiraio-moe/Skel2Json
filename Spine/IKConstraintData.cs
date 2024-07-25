@@ -64,7 +64,7 @@ namespace Skel2Json.Spine
         }
         public bool ShouldSerializeMix()
         {
-            return Mix != 1f;
+            return Mix != 1;
         }
         public bool ShouldSerializeSoftness()
         {

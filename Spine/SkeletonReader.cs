@@ -44,7 +44,7 @@ namespace Skel2Json.Spine
             // Strings.
             o = input.strings = new string[n = input.ReadInt(true)];
             for (int i = 0; i < n; i++)
-                o[i] = input.ReadString() ?? null;
+                o[i] = input.ReadString() ?? "";
 
             //!----- READ BONES
             BoneData[] bones = skeletonData.Bones.Resize(n = input.ReadInt(true)).Items;
@@ -84,7 +84,7 @@ namespace Skel2Json.Spine
                 SlotData slot =
                     new()
                     {
-                        Name = input.ReadString(),
+                        Name = input.ReadString() ?? "",
                         Bone = bones[input.ReadInt(true)].ToString(),
                         Color = ColorHelper.ToRGBA(input.ReadInt()),
                         DarkColor = ColorHelper.ToRGB(input.ReadInt()),
@@ -106,16 +106,17 @@ namespace Skel2Json.Spine
                 .Items;
             for (int i = 0; i < n; i++)
             {
-                IKConstraintData ik = new()
-                {
-                    Name = input.ReadString(),
-                    Order = input.ReadInt(true),
-                    Bones = Enumerable
-                    .Range(0, input.ReadInt(true))
-                    .Select(_ => bones[input.ReadInt(true)].ToString())
-                    .ToList(),
-                    Target = bones[input.ReadInt(true)].ToString()
-                };
+                IKConstraintData ik =
+                    new()
+                    {
+                        Name = input.ReadString(),
+                        Order = input.ReadInt(true),
+                        Bones = Enumerable
+                            .Range(0, input.ReadInt(true))
+                            .Select(_ => bones[input.ReadInt(true)].ToString())
+                            .ToList(),
+                        Target = bones[input.ReadInt(true)].ToString()
+                    };
                 int flags = input.Read();
                 ik.SkinRequired = (flags & 1) != 0;
                 ik.BendDirection = (flags & 2) != 0;
@@ -128,6 +129,63 @@ namespace Skel2Json.Spine
             }
             skeletonData.IKConstraints.Items = iKConstraints;
             //!----- END OF READ IK CONSTRAINTS
+
+            //!----- READ TRANSFORM CONSTRAINTS
+            TransformConstraintData[] transformConstraints = skeletonData
+                .TransformConstraints.Resize(n = input.ReadInt(true))
+                .Items;
+            for (int i = 0; i < n; i++)
+            {
+                TransformConstraintData transform =
+                    new()
+                    {
+                        Name = input.ReadString() ?? "",
+                        Order = input.ReadInt(true),
+                        Bones = Enumerable
+                            .Range(0, input.ReadInt(true))
+                            .Select(_ => bones[input.ReadInt(true)].ToString())
+                            .ToList(),
+                        Target = bones[input.ReadInt(true)].ToString()
+                    };
+                int flags = input.Read();
+                transform.SkinRequired = (flags & 1) != 0;
+                transform.Local = (flags & 2) != 0;
+                transform.Relative = (flags & 4) != 0;
+                transform.OffsetRotation = (float)
+                    Math.Round((flags & 8) != 0 ? input.ReadFloat() : transform.OffsetRotation, 2);
+                transform.OffsetX = (float)
+                    Math.Round(
+                        (flags & 16) != 0 ? input.ReadFloat() * scale : transform.OffsetX,
+                        2
+                    );
+                transform.OffsetY = (float)
+                    Math.Round(
+                        (flags & 32) != 0 ? input.ReadFloat() * scale : transform.OffsetY,
+                        2
+                    );
+                transform.OffsetScaleX = (float)
+                    Math.Round((flags & 64) != 0 ? input.ReadFloat() : transform.OffsetScaleX, 2);
+                transform.OffsetScaleY = (float)
+                    Math.Round((flags & 128) != 0 ? input.ReadFloat() : transform.OffsetScaleY, 2);
+                flags = input.Read();
+                transform.OffsetShearY = (float)
+                    Math.Round((flags & 1) != 0 ? input.ReadFloat() : transform.OffsetShearY, 2);
+                transform.MixRotate = (float)
+                    Math.Round((flags & 2) != 0 ? input.ReadFloat() : transform.MixRotate, 2);
+                transform.MixX = (float)
+                    Math.Round((flags & 4) != 0 ? input.ReadFloat() : transform.MixX, 2);
+                transform.MixY = (float)
+                    Math.Round((flags & 8) != 0 ? input.ReadFloat() : transform.MixY, 2);
+                transform.MixScaleX = (float)
+                    Math.Round((flags & 16) != 0 ? input.ReadFloat() : transform.MixScaleX, 2);
+                transform.MixScaleY = (float)
+                    Math.Round((flags & 32) != 0 ? input.ReadFloat() : transform.MixScaleY, 2);
+                transform.MixShearY = (float)
+                    Math.Round((flags & 64) != 0 ? input.ReadFloat() : transform.MixShearY, 2);
+                transformConstraints[i] = transform;
+            }
+            skeletonData.TransformConstraints.Items = transformConstraints;
+            //!----- END OF READ TRANSFORM CONSTRAINTS
 
             return skeletonData;
         }

@@ -26,10 +26,10 @@ namespace Skel2Json.Spine
         public float Y;
 
         [JsonProperty("scaleX")]
-        public float ScaleX = 1f;
+        public float ScaleX = 1;
 
         [JsonProperty("scaleY")]
-        public float ScaleY = 1f;
+        public float ScaleY = 1;
 
         [JsonProperty("shearX")]
         public float ShearX;
@@ -82,12 +82,12 @@ namespace Skel2Json.Spine
 
         public bool ShouldSerializeScaleX()
         {
-            return ScaleX != 1f;
+            return ScaleX != 1;
         }
 
         public bool ShouldSerializeScaleY()
         {
-            return ScaleY != 1f;
+            return ScaleY != 1;
         }
 
         public bool ShouldSerializeShearX()

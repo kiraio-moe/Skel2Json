@@ -16,5 +16,8 @@ namespace Skel2Json.Spine
 
         [JsonProperty("ik")]
         public ExposedList<IKConstraintData> IKConstraints = [];
+
+        [JsonProperty("transform")]
+        public ExposedList<TransformConstraintData> TransformConstraints = [];
     }
 }
