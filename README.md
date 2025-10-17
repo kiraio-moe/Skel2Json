@@ -1,5 +1,8 @@
 # Skel2Json
 
+> [!IMPORTANT]
+> This project will be discontinued. A better and feature complete alternative is available at [wang606/SpineSkeletonDataConverter](https://github.com/wang606/SpineSkeletonDataConverter).
+
 Skel2Json is a tool to convert Spine 2D `.skel` binary file to the readable `.json` file (and vice versa) that can be use on some 3rd party Skeletal Animation programs out there.
 
 ## Supported Version
